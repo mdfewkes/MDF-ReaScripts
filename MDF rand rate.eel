@@ -1,0 +1,29 @@
+selectCount = CountSelectedMediaItems(0);
+#input.csv = "1,1,1,1";
+
+GetUserInputs("Rate", 4, "Rate Variation,,Adjust Length(1 = true),Preserve Pitch(1 = true)", #input.csv) == 1 ? (
+   match("%f,%f,%f,%f", #input.csv, rMin, rMax, adjustLength, preservePitch);
+   rMod = rMax - rMin;
+   rOffset = rMin;
+
+   x = 0;   
+   while (x < selectCount) (
+
+      item = GetSelectedMediaItem(0, x);
+      take = GetMediaItemTake(item, 0);
+
+      oldRate = GetMediaItemtakeInfo_Value(take, "D_PLAYRATE");
+      newRate = ((rand() * rMod) + rOffset) * oldRate;
+      oldLength = GetMediaItemInfo_Value(item, "D_LENGTH");
+      newLength = (oldRate * oldLength) / newRate;
+
+      SetMediaItemTakeInfo_Value(take, "D_PLAYRATE", newRate);
+
+      (adjustLength > 0.5) ?  SetMediaItemLength(item, newLength, 0);
+      SetMediaItemTakeInfo_Value(take, "B_PPITCH", (preservePitch > 0.5));
+   
+      x += 1;
+   );
+);
+
+UpdateArrange();

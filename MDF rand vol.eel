@@ -1,0 +1,24 @@
+selectCount = CountSelectedMediaItems(0);
+#input.csv = "0,0";
+
+GetUserInputs("Volume", 2, " ", #input.csv) == 1 ? (
+   match("%f,%f", #input.csv, vMin, vMax);
+   vMod = vMax - vMin;
+   vOffset = vMin;
+
+   x = 0;   
+   while (x < selectCount) (
+
+      item = GetSelectedMediaItem(0, x);
+      take = GetMediaItemTake(item, 0);
+
+      oldVolume = GetMediaItemtakeInfo_Value(take, "D_VOL");
+      newVolume = (2 ^ (((rand() * vMod) + vOffset) / 6)) * oldVolume;
+
+      SetMediaItemTakeInfo_Value(take, "D_VOL", newVolume);
+   
+      x += 1;
+   );
+);
+
+UpdateArrange();

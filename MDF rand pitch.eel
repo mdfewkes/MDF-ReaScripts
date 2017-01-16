@@ -1,0 +1,24 @@
+selectCount = CountSelectedMediaItems(0);
+
+rMin = 0;
+rMax = 0;
+
+#input.csv = "0,0";
+run = GetUserInputs("Pitch", 2, "Pitch Variation", #input.csv) == 1 ? (
+   match("%f,%f", #input.csv, rMin, rMax);
+);
+
+rMod = rMax - rMin;
+rOffset = rMin;
+
+x = 0;
+
+while ((x < selectCount) * run) (
+
+	take = GetMediaItemTake(GetSelectedMediaItem(0, x), 0);
+	SetMediaItemTakeInfo_Value(take, "D_PITCH", ((rand() * rMod) + rOffset) + GetMediaItemtakeInfo_Value(take, "D_PITCH"));
+
+	x += 1;
+);
+
+UpdateArrange();

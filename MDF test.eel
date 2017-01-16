@@ -1,0 +1,39 @@
+// Written by Misha Fewkes 01/05/2017
+selectCount = CountSelectedMediaItems(0); // For cycling through the selected items
+#input.csv = "0,0,1,1,0,0"; //Set defaults
+
+GetUserInputs("PRV Variations", 6, "Pitch Variation,,Rate Variation,,Volume Variations", #input.csv) == 1 ? ( //UI!!!
+   match("%f,%f,%f,%f,%f,%f", #input.csv, pMin, pMax, rMin, rMax, vMin, vMax); // Distribute from #input.csv to the variables
+
+   pMod = pMax - pMin; // Convert min and max to mudulation amount and offset from center
+   pOffset = pMin;
+   rMod = rMax - rMin;
+   rOffset = rMin;
+   vMod = vMax - vMin;
+   vOffset = vMin;
+
+   x = 0;   
+   while (x < selectCount) ( // Cycle though items
+
+      item = GetSelectedMediaItem(0, x);
+      take = GetMediaItemTake(item, 0);
+
+      oldPitch = GetMediaItemtakeInfo_Value(take, "D_PITCH"); // Store old values so we dont reset established sound design
+      newPitch = ((rand() * pMod) + pOffset) + oldPitch; // Calculate new values, with referance to old ones
+      oldRate = GetMediaItemtakeInfo_Value(take, "D_PLAYRATE");
+      newRate = ((rand() * rMod) + rOffset) * oldRate;
+      oldLength = GetMediaItemInfo_Value(item, "D_LENGTH");
+      newLength = (oldRate * oldLength) / newRate;
+      oldVolume = GetMediaItemtakeInfo_Value(take, "D_VOL");
+      newVolume = (2 ^ (((rand() * vMod) + vOffset) / 6)) * oldVolume;
+
+      SetMediaItemTakeInfo_Value(take, "D_PITCH", newPitch); // Assign new values
+      SetMediaItemTakeInfo_Value(take, "D_PLAYRATE", newRate);
+      SetMediaItemLength(item, newLength, 0);
+      SetMediaItemTakeInfo_Value(take, "D_VOL", newVolume);
+   
+      x += 1;
+   );
+);
+
+UpdateArrange(); // Update that display!

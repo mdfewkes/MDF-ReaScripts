@@ -1,0 +1,37 @@
+// Written by Misha Fewkes on 01/06/2017
+
+x =  CountSelectedMediaItems(0) - 1;
+while ( x > 0 ) (
+   item = GetSelectedMediaItem(0, x);
+   SetMediaItemSelected(item, 0);
+   x -= 1;
+);
+
+item = GetSelectedMediaItem(0, 0);
+master_pos = GetMediaItemInfo_Value(item, "D_POSITION");
+master_len = GetMediaItemInfo_Value(item, "D_LENGTH");
+crossfade = master_len / 5;
+time_start = 0;
+time_end = 10;
+GetSet_LoopTimeRange2(0, 0, 0, time_start, time_end, 0);
+
+SetEditCurPos(master_pos, 0, 0);
+Main_OnCommand(40698, 0);
+SetEditCurPos(time_start, 0, 0);
+
+x = 1;
+y = 1;
+while (x) (
+   Main_OnCommand(40058, 0);
+   new_pos = time_start + (master_len * y) - (crossfade * y);
+   SetEditCurPos(new_pos, 0, 0);
+   
+   (new_pos + crossfade >= time_end) ? (
+      x = 0;
+      item = GetSelectedMediaItem(0, x);
+      new_len = master_len - (new_pos + crossfade - time_end);
+      SetMediaItemInfo_Value(item, "D_LENGTH", new_len);
+   );
+   
+   y += 1;
+);
