@@ -1,0 +1,23 @@
+selectCount = CountSelectedMediaItems(0);
+#input.csv = "0,0";
+
+GetUserInputs("Pan", 2, " ", #input.csv) == 1 ? (
+   match("%f,%f", #input.csv, pMin, pMax);
+   pMod = pMax - pMin;
+   pOffset = pMin;
+
+   x = 0;   
+   while (x < selectCount) (
+
+      item = GetSelectedMediaItem(0, x);
+      take = GetMediaItemTake(item, 0);
+
+      newPan = ((rand() * pMod) + pOffset);
+
+      SetMediaItemTakeInfo_Value(take, "D_PAN", newPan);
+   
+      x += 1;
+   );
+);
+
+UpdateArrange();
